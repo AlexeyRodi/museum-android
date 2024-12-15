@@ -8,6 +8,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -16,16 +17,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.project1.exhibition.ExhibitionViewModel
-import com.example.project1.exhibition.ExhibitionViewModelFactory
-import com.example.project1.exhibition.FakeExhibitionRepository
-import com.example.project1.museumroom.FakeMuseumRoomRepository
-import com.example.project1.museumroom.MuseumRoomViewModel
-import com.example.project1.museumroom.MuseumRoomViewModelFactory
+import com.example.project1.exhibition.ExhibitionRepository
+import com.example.project1.museumroom.MuseumRoomRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity4 : AppCompatActivity() {
-    private lateinit var museumRoomViewModel: MuseumRoomViewModel
-    private lateinit var buttonsContainer2: LinearLayout
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,38 +44,41 @@ class MainActivity4 : AppCompatActivity() {
         setSupportActionBar(myToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val buttonsContainer: LinearLayout = findViewById(R.id.buttonsContainer2)
+        val api = ApiClient.retrofit.create(MuseumRoomRepository::class.java)
 
-        val buttonsContainer = findViewById<LinearLayout>(R.id.buttonsContainer2)
-
-        val museumRoomRepository = FakeMuseumRoomRepository()
-        val factory = MuseumRoomViewModelFactory(museumRoomRepository)
-        val museumRoomViewModel =
-            ViewModelProvider(this, factory).get(MuseumRoomViewModel::class.java)
-
-        museumRoomViewModel.museumRoomNumbers.observe(this, Observer { names ->
-            buttonsContainer.removeAllViews()
-
-            names.forEach { name ->
-                val button = Button(this).apply {
-                    text = name
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        setMargins(0, 0, 0, 16)
+        CoroutineScope(Dispatchers.IO).launch {
+            val rooms = api.getMuseumRoom()
+            withContext(Dispatchers.Main) {
+                // Обновите UI здесь
+                for (room in rooms) {
+                    val button = Button(this@MainActivity4).apply {
+                        text = room.room_number
+                        layoutParams = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            setMargins(0, 0, 0, 16)
+                        }
+                        setTextColor(resources.getColor(android.R.color.white))
+                        background = resources.getDrawable(R.drawable.button_bg, null)
+                        setPadding(16, 16, 16, 16)
+                        setAllCaps(false)
+                        val typeface = ResourcesCompat.getFont(context, R.font.inter_light)
+                        setTypeface(typeface)
                     }
-                    setTextColor(resources.getColor(android.R.color.white))
-                    background = resources.getDrawable(R.drawable.button_bg, null)
-                    setPadding(16, 16, 16, 16)
-                    setAllCaps(false)
-                    val typeface = ResourcesCompat.getFont(context, R.font.inter_light)
-                    setTypeface(typeface)
+                    button.text = room.room_number
+                    button.setOnClickListener {
+                        Toast.makeText(
+                            this@MainActivity4,
+                            "Выбрана комната: ${room.room_number}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    buttonsContainer.addView(button)
                 }
-                buttonsContainer.addView(button)
             }
-        })
-
-        museumRoomViewModel.loadExhibitionsNames()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -6,22 +6,20 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.Observer
-import com.example.project1.exhibition.ExhibitionViewModel
-import com.example.project1.exhibition.ExhibitionViewModelFactory
-import com.example.project1.exhibition.FakeExhibitionRepository
+import com.example.project1.exhibition.ExhibitionRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity3 : AppCompatActivity() {
-    private lateinit var userViewModel: ExhibitionViewModel
-    private lateinit var buttonsContainer: LinearLayout
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -41,42 +39,42 @@ class MainActivity3 : AppCompatActivity() {
         setSupportActionBar(myToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val buttonsContainer: LinearLayout = findViewById(R.id.buttonsContainer)
+        val api = ApiClient.retrofit.create(ExhibitionRepository::class.java)
 
-        val buttonsContainer = findViewById<LinearLayout>(R.id.buttonsContainer)
-
-        val exhibitionRepository = FakeExhibitionRepository()
-        val factory = ExhibitionViewModelFactory(exhibitionRepository)
-        val exhibitionViewModel =
-            ViewModelProvider(this, factory).get(ExhibitionViewModel::class.java)
-
-        exhibitionViewModel.exhibitionNames.observe(this, Observer { names ->
-            buttonsContainer.removeAllViews()
-
-            names.forEach { name ->
-                val button = Button(this).apply {
-                    text = name
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        setMargins(0, 0, 0, 16)
+        CoroutineScope(Dispatchers.IO).launch {
+            val exhibitions = api.getExhibitions()
+            withContext(Dispatchers.Main) {
+                // Обновите UI здесь
+                for (exhibition in exhibitions) {
+                    val button = Button(this@MainActivity3).apply {
+                        text = exhibition.name
+                        layoutParams = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            setMargins(0, 0, 0, 16)
+                        }
+                        setTextColor(resources.getColor(android.R.color.white))
+                        background = resources.getDrawable(R.drawable.button_bg, null)
+                        setPadding(16, 16, 16, 16)
+                        setAllCaps(false)
+                        val typeface = ResourcesCompat.getFont(context, R.font.inter_light)
+                        setTypeface(typeface)
                     }
-                    setTextColor(resources.getColor(android.R.color.white))
-                    background = resources.getDrawable(R.drawable.button_bg, null)
-                    setPadding(16, 16, 16, 16)
-                    setAllCaps(false)
-                    val typeface = ResourcesCompat.getFont(context, R.font.inter_light)
-                    setTypeface(typeface)
+                    button.text = exhibition.name
+                    button.setOnClickListener {
+                        Toast.makeText(
+                            this@MainActivity3,
+                            "Выбрана выставка: ${exhibition.name}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    buttonsContainer.addView(button)
                 }
-                buttonsContainer.addView(button)
             }
-        })
-
-        exhibitionViewModel.loadExhibitionsNames()
-
-
+        }
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

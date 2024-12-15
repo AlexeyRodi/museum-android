@@ -1,6 +1,8 @@
 package com.example.project1.museumroom
 
 data class MuseumRoom(
-    val roomNumber: String
+    val room_number: String,
+    val description: String,
+    val museum: Int,
 )
 
