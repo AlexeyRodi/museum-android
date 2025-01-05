@@ -24,58 +24,84 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
 class MainActivity4 : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.getWindow().setFlags(
+        window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         enableEdgeToEdge()
         setContentView(R.layout.activity_main4)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val myToolbar: Toolbar = findViewById(R.id.my_toolbar3)
         setSupportActionBar(myToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val buttonsContainer: LinearLayout = findViewById(R.id.buttonsContainer2)
+
         val api = ApiClient.retrofit.create(MuseumRoomRepository::class.java)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val rooms = api.getMuseumRoom()
-            withContext(Dispatchers.Main) {
-                // Обновите UI здесь
-                for (room in rooms) {
-                    val button = Button(this@MainActivity4).apply {
-                        text = room.room_number
-                        layoutParams = LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                        ).apply {
-                            setMargins(0, 0, 0, 16)
+            try {
+                val response = api.getMuseumRoom().execute()
+
+                if (response.isSuccessful) {
+                    val rooms = response.body() ?: emptyList()
+
+                    withContext(Dispatchers.Main) {
+                        // Update UI with the museum rooms
+                        for (room in rooms) {
+                            val button = Button(this@MainActivity4).apply {
+                                text = "Комната ${room.room_number}"
+                                layoutParams = LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                                ).apply {
+                                    setMargins(0, 0, 0, 16)
+                                }
+                                setTextColor(resources.getColor(android.R.color.white, null))
+                                background = resources.getDrawable(R.drawable.button_bg, null)
+                                setPadding(16, 16, 16, 16)
+                                setAllCaps(false)
+                                val typeface = ResourcesCompat.getFont(context, R.font.inter_light)
+                                setTypeface(typeface)
+                            }
+                            button.setOnClickListener {
+                                Toast.makeText(
+                                    this@MainActivity4,
+                                    "Выбрана комната: ${room.room_number}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            buttonsContainer.addView(button)
                         }
-                        setTextColor(resources.getColor(android.R.color.white))
-                        background = resources.getDrawable(R.drawable.button_bg, null)
-                        setPadding(16, 16, 16, 16)
-                        setAllCaps(false)
-                        val typeface = ResourcesCompat.getFont(context, R.font.inter_light)
-                        setTypeface(typeface)
                     }
-                    button.text = room.room_number
-                    button.setOnClickListener {
+                } else {
+                    withContext(Dispatchers.Main) {
                         Toast.makeText(
                             this@MainActivity4,
-                            "Выбрана комната: ${room.room_number}",
+                            "Ошибка: ${response.code()} ${response.message()}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    buttonsContainer.addView(button)
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@MainActivity4,
+                        "Ошибка загрузки комнат: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }

@@ -23,12 +23,13 @@ class MainActivity3 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.getWindow().setFlags(
+        window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         enableEdgeToEdge()
         setContentView(R.layout.activity_main3)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -40,37 +41,60 @@ class MainActivity3 : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val buttonsContainer: LinearLayout = findViewById(R.id.buttonsContainer)
+
         val api = ApiClient.retrofit.create(ExhibitionRepository::class.java)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val exhibitions = api.getExhibitions()
-            withContext(Dispatchers.Main) {
-                // Обновите UI здесь
-                for (exhibition in exhibitions) {
-                    val button = Button(this@MainActivity3).apply {
-                        text = exhibition.name
-                        layoutParams = LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                        ).apply {
-                            setMargins(0, 0, 0, 16)
+            try {
+                val response = api.getExhibitions().execute()
+
+                if (response.isSuccessful) {
+                    val exhibitions = response.body() ?: emptyList()
+
+                    withContext(Dispatchers.Main) {
+                        // Update UI with the exhibitions
+                        for (exhibition in exhibitions) {
+                            val button = Button(this@MainActivity3).apply {
+                                text = exhibition.name
+                                layoutParams = LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                                ).apply {
+                                    setMargins(0, 0, 0, 16)
+                                }
+                                setTextColor(resources.getColor(android.R.color.white, null))
+                                background = resources.getDrawable(R.drawable.button_bg, null)
+                                setPadding(16, 16, 16, 16)
+                                setAllCaps(false)
+                                val typeface = ResourcesCompat.getFont(context, R.font.inter_light)
+                                setTypeface(typeface)
+                            }
+                            button.setOnClickListener {
+                                Toast.makeText(
+                                    this@MainActivity3,
+                                    "Выбрана выставка: ${exhibition.name}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            buttonsContainer.addView(button)
                         }
-                        setTextColor(resources.getColor(android.R.color.white))
-                        background = resources.getDrawable(R.drawable.button_bg, null)
-                        setPadding(16, 16, 16, 16)
-                        setAllCaps(false)
-                        val typeface = ResourcesCompat.getFont(context, R.font.inter_light)
-                        setTypeface(typeface)
                     }
-                    button.text = exhibition.name
-                    button.setOnClickListener {
+                } else {
+                    withContext(Dispatchers.Main) {
                         Toast.makeText(
                             this@MainActivity3,
-                            "Выбрана выставка: ${exhibition.name}",
+                            "Ошибка: ${response.code()} ${response.message()}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    buttonsContainer.addView(button)
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@MainActivity3,
+                        "Ошибка загрузки выставок: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
