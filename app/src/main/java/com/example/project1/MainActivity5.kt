@@ -73,6 +73,14 @@ class MainActivity5 : AppCompatActivity() {
                                 setTypeface(typeface)
                             }
                             button.setOnClickListener {
+                                val intent = Intent(this@MainActivity5, MainActivity6::class.java)
+
+                                intent.putExtra(
+                                    "EXHIBIT_ID",
+                                    exhibit.exhibit_id
+                                )  // передаем ID экспоната
+                                startActivity(intent)
+
                                 Toast.makeText(
                                     this@MainActivity5,
                                     "Выбран экспонат: ${exhibit.name}",
