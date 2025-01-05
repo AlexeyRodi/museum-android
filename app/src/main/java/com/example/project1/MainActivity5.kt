@@ -1,5 +1,7 @@
 package com.example.project1
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
@@ -13,13 +15,15 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.project1.exhibition.ExhibitionRepository
+import com.example.project1.exhibit.ExhibitRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity3 : AppCompatActivity() {
+
+class MainActivity5 : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -28,7 +32,7 @@ class MainActivity3 : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main3)
+        setContentView(R.layout.activity_main5)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -36,25 +40,25 @@ class MainActivity3 : AppCompatActivity() {
             insets
         }
 
-        val myToolbar: Toolbar = findViewById(R.id.my_toolbar2)
+        val myToolbar: Toolbar = findViewById(R.id.my_toolbar5)
         setSupportActionBar(myToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val buttonsContainer: LinearLayout = findViewById(R.id.buttonsContainer)
+        val buttonsContainer: LinearLayout = findViewById(R.id.buttonsContainer3)
 
-        val api = ApiClient.retrofit.create(ExhibitionRepository::class.java)
+        val api = ApiClient.retrofit.create(ExhibitRepository::class.java)
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = api.getExhibitions().execute()
+                val response = api.getExhibit().execute()
 
                 if (response.isSuccessful) {
-                    val exhibitions = response.body() ?: emptyList()
+                    val exhibits = response.body() ?: emptyList()
 
                     withContext(Dispatchers.Main) {
-                        for (exhibition in exhibitions) {
-                            val button = Button(this@MainActivity3).apply {
-                                text = exhibition.name
+                        for (exhibit in exhibits) {
+                            val button = Button(this@MainActivity5).apply {
+                                text = exhibit.name
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -70,8 +74,8 @@ class MainActivity3 : AppCompatActivity() {
                             }
                             button.setOnClickListener {
                                 Toast.makeText(
-                                    this@MainActivity3,
-                                    "Выбрана выставка: ${exhibition.name}",
+                                    this@MainActivity5,
+                                    "Выбран экспонат: ${exhibit.name}",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -81,7 +85,7 @@ class MainActivity3 : AppCompatActivity() {
                 } else {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
-                            this@MainActivity3,
+                            this@MainActivity5,
                             "Ошибка: ${response.code()} ${response.message()}",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -90,8 +94,8 @@ class MainActivity3 : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
-                        this@MainActivity3,
-                        "Ошибка загрузки выставок: ${e.message}",
+                        this@MainActivity5,
+                        "Ошибка загрузки экспонатов: ${e.message}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }

@@ -18,7 +18,10 @@ class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        this.getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         enableEdgeToEdge()
         setContentView(R.layout.activity_main2)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -32,16 +35,22 @@ class MainActivity2 : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val buttonToLouvre: Button = findViewById(R.id.buttonExhibitions)
-        val buttonToHermitage: Button = findViewById(R.id.buttonMuseums_Rooms)
+        val buttonExhibitions: Button = findViewById(R.id.buttonExhibitions)
+        val buttonMuseumRooms: Button = findViewById(R.id.buttonMuseums_Rooms)
+        val buttonExhibits: Button = findViewById(R.id.buttonExhibit)
 
 
-        buttonToLouvre.setOnClickListener {
+        buttonExhibitions.setOnClickListener {
             val intent = Intent(this, MainActivity3::class.java)
             startActivity(intent)
         }
 
-        buttonToHermitage.setOnClickListener {
+        buttonExhibits.setOnClickListener {
+            val intent = Intent(this, MainActivity5::class.java)
+            startActivity(intent)
+        }
+
+        buttonMuseumRooms.setOnClickListener {
             val intent = Intent(this, MainActivity4::class.java)
             startActivity(intent)
         }
@@ -54,6 +63,7 @@ class MainActivity2 : AppCompatActivity() {
                 onBackPressed()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

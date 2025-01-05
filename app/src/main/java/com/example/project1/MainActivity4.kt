@@ -59,7 +59,6 @@ class MainActivity4 : AppCompatActivity() {
                     val rooms = response.body() ?: emptyList()
 
                     withContext(Dispatchers.Main) {
-                        // Update UI with the museum rooms
                         for (room in rooms) {
                             val button = Button(this@MainActivity4).apply {
                                 text = "Комната ${room.room_number}"
