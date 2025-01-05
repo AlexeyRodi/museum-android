@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -11,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.project1.exhibit.ExhibitRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +24,7 @@ class MainActivity6 : AppCompatActivity() {
     private lateinit var exhibitCreatorTextView: TextView
     private lateinit var exhibitYearTextView: TextView
     private lateinit var exhibitRoomTextView: TextView
+    private lateinit var exhibitImageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +51,7 @@ class MainActivity6 : AppCompatActivity() {
         exhibitCreatorTextView = findViewById(R.id.exhibitCreator)
         exhibitYearTextView = findViewById(R.id.exhibitYear)
         exhibitRoomTextView = findViewById(R.id.exhibitRoom)
+        exhibitImageView = findViewById(R.id.exhibitImage)
 
         val exhibitId = intent.getIntExtra("EXHIBIT_ID", -1)
 
@@ -61,13 +65,16 @@ class MainActivity6 : AppCompatActivity() {
     private fun loadExhibitDetails(exhibitId: Int) {
         val myToolbar: Toolbar = findViewById(R.id.my_toolbar6)
         val api = ApiClient.retrofit.create(ExhibitRepository::class.java)
+        val baseUrl = "http://10.0.2.2:8000"
+
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = api.getExhibitDetails(exhibitId).execute()
 
-                if (response.isSuccessful) {
+                    if (response.isSuccessful) {
                     val exhibit = response.body()
+
                     withContext(Dispatchers.Main) {
                         exhibit?.let {
                             myToolbar.setTitle(it.name)
@@ -75,6 +82,9 @@ class MainActivity6 : AppCompatActivity() {
                             exhibitCreatorTextView.text = it.creator
                             exhibitYearTextView.text = it.creationYear.toString()
                             exhibitRoomTextView.text = it.room
+                            Glide.with(this@MainActivity6)
+                                .load(baseUrl + it.image)
+                                .into(exhibitImageView)
                         } ?: run {
                             Toast.makeText(
                                 this@MainActivity6,
