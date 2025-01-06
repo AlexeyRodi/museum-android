@@ -78,7 +78,7 @@ class MainActivity5 : AppCompatActivity() {
                                 intent.putExtra(
                                     "EXHIBIT_ID",
                                     exhibit.exhibit_id
-                                )  // передаем ID экспоната
+                                )
                                 startActivity(intent)
 
                                 Toast.makeText(

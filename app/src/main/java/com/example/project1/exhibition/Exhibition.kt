@@ -1,13 +1,13 @@
 package com.example.project1.exhibition
 
-import java.util.Date
-
 data class Exhibition(
+    val exhibition_id: Int,
     val name: String,
-    val startDate: Date,
-    val endDate: Date,
+    val start_date: String,
+    val end_date: String,
     val country: String,
     val venue: String,
-    val responsiblePerson: String,
-    val museum: Int
+    val responsible_person: String,
+    val museum: Int,
+    val image: String?,
 )

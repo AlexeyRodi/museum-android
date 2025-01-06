@@ -1,5 +1,6 @@
 package com.example.project1
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
@@ -69,6 +70,14 @@ class MainActivity3 : AppCompatActivity() {
                                 setTypeface(typeface)
                             }
                             button.setOnClickListener {
+                                val intent = Intent(this@MainActivity3, MainActivity7::class.java)
+
+                                intent.putExtra(
+                                    "EXHIBITION_ID",
+                                    exhibition.exhibition_id
+                                )
+                                startActivity(intent)
+
                                 Toast.makeText(
                                     this@MainActivity3,
                                     "Выбрана выставка: ${exhibition.name}",
