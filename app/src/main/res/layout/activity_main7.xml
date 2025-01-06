@@ -186,6 +186,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/labelPlace" />
 
+        <Button
+            android:id="@+id/buttonEditExhibition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/button_bg"
+            android:fontFamily="@font/inter_light"
+            android:text="Изменить"
+            app:backgroundTint="@null"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/exhibitionPlace"
+            tools:ignore="VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/buttonDeleteExhibition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/button_bg"
+            android:fontFamily="@font/inter_light"
+            android:text="Удалить"
+            app:backgroundTint="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.12"
+            app:layout_constraintStart_toEndOf="@+id/buttonEditExhibition"
+            app:layout_constraintTop_toBottomOf="@+id/exhibitionPlace"
+            tools:ignore="VisualLintButtonSize" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
