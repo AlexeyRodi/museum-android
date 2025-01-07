@@ -3,6 +3,7 @@ package com.example.project1
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
@@ -21,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.example.project1.exhibit.Exhibit
 import com.example.project1.exhibit.ExhibitRepository
 import com.example.project1.museumroom.MuseumRoom
 import com.example.project1.museumroom.MuseumRoomRepository
@@ -28,16 +30,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity8 : AppCompatActivity() {
     private lateinit var exhibitDescriptionEditText: EditText
     private lateinit var exhibitCreatorEditText: EditText
     private lateinit var exhibitYearEditText: EditText
     private lateinit var exhibitRoomSpinner: Spinner
-    private var selectedRoomId: Int? = null
-//    private lateinit var exhibitImageView: ImageView
-//    private lateinit var exhibitEditButton: Button
+    private lateinit var buttonSaveExhibit: Button
+    private lateinit var exhibitImageView: ImageView
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -63,6 +68,7 @@ class MainActivity8 : AppCompatActivity() {
         exhibitCreatorEditText = findViewById(R.id.exhibitCreator)
         exhibitYearEditText = findViewById(R.id.exhibitYear)
         exhibitRoomSpinner = findViewById(R.id.roomSpinner)
+        buttonSaveExhibit = findViewById(R.id.buttonSaveExhibit)
 
         val exhibitId = intent.getIntExtra("EXHIBIT_ID", -1)
 
@@ -70,6 +76,33 @@ class MainActivity8 : AppCompatActivity() {
             loadExhibitDetails(exhibitId)
         } else {
             Toast.makeText(this, "Ошибка: экспонат не найден", Toast.LENGTH_SHORT).show()
+        }
+
+        buttonSaveExhibit.setOnClickListener {
+            val exhibitName = myToolbar.title.toString()
+            val exhibitDescription = exhibitDescriptionEditText.text.toString()
+            val exhibitCreator = exhibitCreatorEditText.text.toString()
+            val exhibitYear = exhibitYearEditText.text.toString()
+            val exhibitRoom = exhibitRoomSpinner.selectedItem.toString().toIntOrNull()
+
+
+            if (exhibitName.isBlank() || exhibitDescription.isBlank() || exhibitYear == null || exhibitCreator.isBlank() || exhibitRoom == null) {
+                Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            // Создать объект Exhibit
+            val exhibit = Exhibit(
+                exhibit_id = exhibitId,
+                name = exhibitName,
+                description = exhibitDescription,
+                creation_year = exhibitYear.toInt(),
+                creator = exhibitCreator,
+                room = exhibitRoom
+            )
+
+            updateExhibit(exhibit)
+
+
         }
     }
 
@@ -119,14 +152,13 @@ class MainActivity8 : AppCompatActivity() {
     private fun setRoomSelectionById(exhibitRoomId: Int, rooms: List<MuseumRoom>) {
         val room = rooms.find { it.room_id == exhibitRoomId }
         room?.let {
-            val position = (exhibitRoomSpinner.adapter as ArrayAdapter<String>).getPosition(it.room_number)
+            val position =
+                (exhibitRoomSpinner.adapter as ArrayAdapter<String>).getPosition(it.room_number)
             if (position >= 0) {
                 exhibitRoomSpinner.setSelection(position)
             }
         }
     }
-
-
 
 
     @SuppressLint("SuspiciousIndentation")
@@ -147,7 +179,7 @@ class MainActivity8 : AppCompatActivity() {
                         exhibit?.let {
                             myToolbar.setTitle(it.name)
                             exhibitDescriptionEditText.setText(it.description)
-                            exhibitYearEditText.setText(it.creationYear.toString())
+                            exhibitYearEditText.setText(it.creation_year.toString())
                             exhibitCreatorEditText.setText(it.creator)
 
                             loadRooms(it.room)
@@ -183,6 +215,33 @@ class MainActivity8 : AppCompatActivity() {
         }
     }
 
+    private fun updateExhibit(exhibit: Exhibit) {
+        Log.d("UpdateExhibit", "Отправка запроса на сервер для экспоната с ID: ${exhibit.exhibit_id}")
+        val repository = ApiClient.retrofit.create(ExhibitRepository::class.java)
+
+        val call = repository.updateExhibit(exhibit.exhibit_id, exhibit)
+
+        call.enqueue(object : Callback<Exhibit> {
+            override fun onResponse(call: Call<Exhibit>, response: Response<Exhibit>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@MainActivity8, "Данные обновлены успешно!", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@MainActivity8, MainActivity6::class.java)
+
+                    intent.putExtra(
+                        "EXHIBIT_ID",
+                        exhibit.exhibit_id
+                    )
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(this@MainActivity8, "Ошибка обновления: ${response.code()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Exhibit>, t: Throwable) {
+                Toast.makeText(this@MainActivity8, "Ошибка сети: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -4,8 +4,8 @@ data class Exhibit(
     val exhibit_id: Int,
     val name: String,
     val description: String,
-    val creationYear: Int,
+    val creation_year: Int,
     val creator: String,
     val room: Int,
-    val image: String?
+    val image: String? = null
 )

@@ -94,7 +94,7 @@ class MainActivity6 : AppCompatActivity() {
                             myToolbar.setTitle(it.name)
                             exhibitDescriptionTextView.text = it.description
                             exhibitCreatorTextView.text = it.creator
-                            exhibitYearTextView.text = it.creationYear.toString()
+                            exhibitYearTextView.text = it.creation_year.toString()
                             exhibitRoomTextView.text = it.room.toString()
                             Glide.with(this@MainActivity6)
                                 .load(baseUrl + it.image)
