@@ -2,30 +2,31 @@ package com.example.project1
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.util.Base64
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.Spinner
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import android.widget.TextView
 import android.widget.Toast
-import com.bumptech.glide.Glide
 import com.example.project1.exhibit.Exhibit
 import com.example.project1.exhibit.ExhibitRepository
 import com.example.project1.museumroom.MuseumRoom
 import com.example.project1.museumroom.MuseumRoomRepository
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,6 +34,9 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+
 
 class MainActivity8 : AppCompatActivity() {
     private lateinit var exhibitDescriptionEditText: EditText
@@ -40,7 +44,10 @@ class MainActivity8 : AppCompatActivity() {
     private lateinit var exhibitYearEditText: EditText
     private lateinit var exhibitRoomSpinner: Spinner
     private lateinit var buttonSaveExhibit: Button
-    private lateinit var exhibitImageView: ImageView
+    private lateinit var buttonChooseImage: Button
+    private lateinit var selectedImageUri: Uri
+
+    private val PICK_IMAGE_REQUEST = 1
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,6 +76,7 @@ class MainActivity8 : AppCompatActivity() {
         exhibitYearEditText = findViewById(R.id.exhibitYear)
         exhibitRoomSpinner = findViewById(R.id.roomSpinner)
         buttonSaveExhibit = findViewById(R.id.buttonSaveExhibit)
+        buttonChooseImage = findViewById(R.id.buttonСhooseImage)
 
         val exhibitId = intent.getIntExtra("EXHIBIT_ID", -1)
 
@@ -76,6 +84,10 @@ class MainActivity8 : AppCompatActivity() {
             loadExhibitDetails(exhibitId)
         } else {
             Toast.makeText(this, "Ошибка: экспонат не найден", Toast.LENGTH_SHORT).show()
+        }
+
+        buttonChooseImage.setOnClickListener {
+            openImageChooser()
         }
 
         buttonSaveExhibit.setOnClickListener {
@@ -90,15 +102,21 @@ class MainActivity8 : AppCompatActivity() {
                 Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            // Создать объект Exhibit
+
+            val exhibitImage = selectedImageUri?.let { convertImageToBase64(it) } ?: ""
+
             val exhibit = Exhibit(
                 exhibit_id = exhibitId,
                 name = exhibitName,
                 description = exhibitDescription,
                 creation_year = exhibitYear.toInt(),
                 creator = exhibitCreator,
-                room = exhibitRoom
+                room = exhibitRoom,
+                image_upload = exhibitImage
             )
+
+            val exhibitJson = Gson().toJson(exhibit)
+            Log.d("ExhibitJson", exhibitJson)
 
             updateExhibit(exhibit)
 
@@ -243,6 +261,38 @@ class MainActivity8 : AppCompatActivity() {
         })
     }
 
+    private fun openImageChooser() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.type = "image/*" // Фильтр для выбора только изображений
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        startActivityForResult(intent, PICK_IMAGE_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.data!!
+            Log.d("SelectedImageUri", selectedImageUri.toString()) // Выводим URI в лог
+        }
+    }
+
+    private fun convertImageToBase64(uri: Uri): String? {
+        try {
+            val inputStream = contentResolver.openInputStream(uri)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream?.close()
+
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+            val byteArray = byteArrayOutputStream.toByteArray()
+
+            return Base64.encodeToString(byteArray, Base64.DEFAULT)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -250,7 +300,6 @@ class MainActivity8 : AppCompatActivity() {
                 onBackPressed()
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }
