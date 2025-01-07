@@ -6,6 +6,6 @@ data class Exhibit(
     val description: String,
     val creationYear: Int,
     val creator: String,
-    val room: String,
+    val room: Int,
     val image: String?
 )

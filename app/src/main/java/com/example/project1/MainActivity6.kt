@@ -1,10 +1,12 @@
 package com.example.project1
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +28,7 @@ class MainActivity6 : AppCompatActivity() {
     private lateinit var exhibitYearTextView: TextView
     private lateinit var exhibitRoomTextView: TextView
     private lateinit var exhibitImageView: ImageView
+    private lateinit var exhibitEditButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,13 +56,22 @@ class MainActivity6 : AppCompatActivity() {
         exhibitYearTextView = findViewById(R.id.exhibitYear)
         exhibitRoomTextView = findViewById(R.id.exhibitRoom)
         exhibitImageView = findViewById(R.id.exhibitImage)
+        exhibitEditButton = findViewById(R.id.buttonEditExhibit)
 
         val exhibitId = intent.getIntExtra("EXHIBIT_ID", -1)
+        val exhibitRoomId = intent.getIntExtra("EXHIBIT_ROOM", -1) // Если room - ID (число)
 
         if (exhibitId != -1) {
             loadExhibitDetails(exhibitId)
         } else {
             Toast.makeText(this, "Ошибка: экспонат не найден", Toast.LENGTH_SHORT).show()
+        }
+
+        exhibitEditButton.setOnClickListener{
+            val intent = Intent(this, MainActivity8::class.java)
+            intent.putExtra("EXHIBIT_ID", exhibitId)
+            intent.putExtra("EXHIBIT_ROOM", exhibitRoomId)
+            startActivity(intent)
         }
     }
 
@@ -83,7 +95,7 @@ class MainActivity6 : AppCompatActivity() {
                             exhibitDescriptionTextView.text = it.description
                             exhibitCreatorTextView.text = it.creator
                             exhibitYearTextView.text = it.creationYear.toString()
-                            exhibitRoomTextView.text = it.room
+                            exhibitRoomTextView.text = it.room.toString()
                             Glide.with(this@MainActivity6)
                                 .load(baseUrl + it.image)
                                 .into(exhibitImageView)
