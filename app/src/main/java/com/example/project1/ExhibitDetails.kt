@@ -29,6 +29,7 @@ class ExhibitDetails : AppCompatActivity() {
     private lateinit var exhibitRoomTextView: TextView
     private lateinit var exhibitImageView: ImageView
     private lateinit var exhibitEditButton: Button
+    private lateinit var exhibitDeleteButton: Button
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +59,7 @@ class ExhibitDetails : AppCompatActivity() {
         exhibitRoomTextView = findViewById(R.id.exhibitRoom)
         exhibitImageView = findViewById(R.id.exhibitImage)
         exhibitEditButton = findViewById(R.id.buttonEditExhibit)
+        exhibitDeleteButton = findViewById(R.id.buttonDeleteExhibit)
 
         val exhibitId = intent.getIntExtra("EXHIBIT_ID", -1)
         val exhibitRoomId = intent.getIntExtra("EXHIBIT_ROOM", -1) // Если room - ID (число)
@@ -73,6 +75,10 @@ class ExhibitDetails : AppCompatActivity() {
             intent.putExtra("EXHIBIT_ID", exhibitId)
             intent.putExtra("EXHIBIT_ROOM", exhibitRoomId)
             startActivity(intent)
+        }
+
+        exhibitDeleteButton.setOnClickListener {
+            deleteExhibit(exhibitId)
         }
     }
 
@@ -128,6 +134,44 @@ class ExhibitDetails : AppCompatActivity() {
             }
         }
     }
+
+    private fun deleteExhibit(exhibitId: Int) {
+        val api = ApiClient.retrofit.create(ExhibitRepository::class.java)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.deleteExhibit(exhibitId).execute()
+                if (response.isSuccessful) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@ExhibitDetails,
+                            "Экспонат успешно удалён",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        val intent = Intent(this@ExhibitDetails, ExhibitList::class.java)
+                        startActivity(intent)
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@ExhibitDetails,
+                            "Ошибка удаления: ${response.code()} ${response.message()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@ExhibitDetails,
+                        "Ошибка: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

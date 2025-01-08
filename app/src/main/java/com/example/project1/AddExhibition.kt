@@ -107,7 +107,8 @@ class AddExhibition : AppCompatActivity() {
             override fun onResponse(call: Call<Exhibition>, response: Response<Exhibition>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@AddExhibition, "Экспонат добавлен!", Toast.LENGTH_SHORT).show()
-                    finish()
+                    val intent = Intent(this@AddExhibition, ExhibitionList::class.java)
+                    startActivity(intent)
                 } else {
                     Toast.makeText(
                         this@AddExhibition,

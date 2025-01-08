@@ -163,7 +163,8 @@ class AddExhibit : AppCompatActivity() {
             override fun onResponse(call: Call<Exhibit>, response: Response<Exhibit>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@AddExhibit, "Экспонат добавлен!", Toast.LENGTH_SHORT).show()
-                    finish()
+                    val intent = Intent(this@AddExhibit, ExhibitList::class.java)
+                    startActivity(intent)
                 } else {
                     Toast.makeText(
                         this@AddExhibit,
