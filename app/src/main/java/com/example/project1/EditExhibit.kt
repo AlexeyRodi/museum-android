@@ -264,7 +264,7 @@ class EditExhibit : AppCompatActivity() {
         )
         val repository = ApiClient.retrofit.create(ExhibitRepository::class.java)
 
-        val call = repository.updateExhibit(exhibit.exhibit_id, exhibit)
+        val call = repository.updateExhibit(exhibit.exhibit_id!!, exhibit)
 
         call.enqueue(object : Callback<Exhibit> {
             override fun onResponse(call: Call<Exhibit>, response: Response<Exhibit>) {

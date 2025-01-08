@@ -1,7 +1,7 @@
 package com.example.project1.exhibit
 
 data class Exhibit(
-    val exhibit_id: Int,
+    val exhibit_id: Int?,
     val name: String,
     val description: String,
     val creation_year: Int,
