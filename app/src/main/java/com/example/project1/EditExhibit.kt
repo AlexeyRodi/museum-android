@@ -34,6 +34,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 
 
@@ -44,7 +45,9 @@ class EditExhibit : AppCompatActivity() {
     private lateinit var exhibitRoomSpinner: Spinner
     private lateinit var buttonSaveExhibit: Button
     private lateinit var buttonChooseImage: Button
-    private lateinit var selectedImageUri: Uri
+
+    private lateinit var initialImage: String
+    private var selectedImageUri: Uri? = null
 
     private val PICK_IMAGE_REQUEST = 1
 
@@ -104,20 +107,41 @@ class EditExhibit : AppCompatActivity() {
 
             val exhibitImage = selectedImageUri?.let { convertImageToBase64(it) } ?: ""
 
-            val exhibit = Exhibit(
-                exhibit_id = exhibitId,
-                name = exhibitName,
-                description = exhibitDescription,
-                creation_year = exhibitYear.toInt(),
-                creator = exhibitCreator,
-                room = exhibitRoom,
-                image_upload = exhibitImage
-            )
+            val exhibitionImg = convertImagePathToUri(initialImage)
 
-            val exhibitJson = Gson().toJson(exhibit)
-            Log.d("ExhibitJson", exhibitJson)
+            val base64Image = exhibitionImg?.let { convertImageToBase64(it) }
 
-            updateExhibit(exhibit)
+            if (exhibitImage == "") {
+                val exhibit = Exhibit(
+                    exhibit_id = exhibitId,
+                    name = exhibitName,
+                    description = exhibitDescription,
+                    creation_year = exhibitYear.toInt(),
+                    creator = exhibitCreator,
+                    room = exhibitRoom,
+                    image_upload = base64Image
+                )
+
+                val exhibitJson = Gson().toJson(exhibit)
+                Log.d("ExhibitJson", exhibitJson)
+
+                updateExhibit(exhibit)
+            } else {
+                val exhibit = Exhibit(
+                    exhibit_id = exhibitId,
+                    name = exhibitName,
+                    description = exhibitDescription,
+                    creation_year = exhibitYear.toInt(),
+                    creator = exhibitCreator,
+                    room = exhibitRoom,
+                    image_upload = exhibitImage
+                )
+
+                val exhibitJson = Gson().toJson(exhibit)
+                Log.d("ExhibitJson", exhibitJson)
+
+                updateExhibit(exhibit)
+            }
 
 
         }
@@ -198,6 +222,7 @@ class EditExhibit : AppCompatActivity() {
                             exhibitDescriptionEditText.setText(it.description)
                             exhibitYearEditText.setText(it.creation_year.toString())
                             exhibitCreatorEditText.setText(it.creator)
+                            initialImage = it.image.toString()
 
                             loadRooms(it.room)
 
@@ -233,7 +258,10 @@ class EditExhibit : AppCompatActivity() {
     }
 
     private fun updateExhibit(exhibit: Exhibit) {
-        Log.d("UpdateExhibit", "Отправка запроса на сервер для экспоната с ID: ${exhibit.exhibit_id}")
+        Log.d(
+            "UpdateExhibit",
+            "Отправка запроса на сервер для экспоната с ID: ${exhibit.exhibit_id}"
+        )
         val repository = ApiClient.retrofit.create(ExhibitRepository::class.java)
 
         val call = repository.updateExhibit(exhibit.exhibit_id, exhibit)
@@ -241,7 +269,11 @@ class EditExhibit : AppCompatActivity() {
         call.enqueue(object : Callback<Exhibit> {
             override fun onResponse(call: Call<Exhibit>, response: Response<Exhibit>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@EditExhibit, "Данные обновлены успешно!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@EditExhibit,
+                        "Данные обновлены успешно!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     val intent = Intent(this@EditExhibit, ExhibitDetails::class.java)
 
                     intent.putExtra(
@@ -250,12 +282,17 @@ class EditExhibit : AppCompatActivity() {
                     )
                     startActivity(intent)
                 } else {
-                    Toast.makeText(this@EditExhibit, "Ошибка обновления: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@EditExhibit,
+                        "Ошибка обновления: ${response.code()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<Exhibit>, t: Throwable) {
-                Toast.makeText(this@EditExhibit, "Ошибка сети: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@EditExhibit, "Ошибка сети: ${t.message}", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }
@@ -292,6 +329,11 @@ class EditExhibit : AppCompatActivity() {
         }
     }
 
+    private fun convertImagePathToUri(imagePath: String): Uri? {
+        val file = File(filesDir, imagePath)
+        return if (file.exists()) Uri.fromFile(file) else null
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -299,6 +341,7 @@ class EditExhibit : AppCompatActivity() {
                 onBackPressed()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

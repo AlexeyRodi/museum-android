@@ -1,10 +1,12 @@
 package com.example.project1
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -23,9 +25,8 @@ import kotlinx.coroutines.withContext
 class ExhibitionDetails : AppCompatActivity() {
     private lateinit var exhibitionStartDateTextView: TextView
     private lateinit var exhibitionEndDateTextView: TextView
-    private lateinit var exhibitionCountryTextView: TextView
-    private lateinit var exhibitionCityTextView: TextView
-    private lateinit var exhibitionPlaceTextView: TextView
+    private lateinit var exhibitionResponsiblePersonTextView: TextView
+    private lateinit var exhibitionEditButton: Button
     private lateinit var exhibitionImageView: ImageView
 
     @SuppressLint("MissingInflatedId")
@@ -52,10 +53,9 @@ class ExhibitionDetails : AppCompatActivity() {
 
         exhibitionStartDateTextView = findViewById(R.id.exhibitionStartDate)
         exhibitionEndDateTextView = findViewById(R.id.exhibitionEndDate)
-        exhibitionCountryTextView = findViewById(R.id.exhibitionCountry)
-        exhibitionCityTextView = findViewById(R.id.exhibitionCity)
-        exhibitionPlaceTextView = findViewById(R.id.exhibitionPlace)
+        exhibitionResponsiblePersonTextView = findViewById(R.id.exhibitionResponsiblePerson)
         exhibitionImageView = findViewById(R.id.exhibitionImage)
+        exhibitionEditButton = findViewById(R.id.buttonEditExhibition)
 
         val exhibitionId = intent.getIntExtra("EXHIBITION_ID", -1)
 
@@ -63,6 +63,12 @@ class ExhibitionDetails : AppCompatActivity() {
             loadExhibitionDetails(exhibitionId)
         } else {
             Toast.makeText(this, "Ошибка: выставка не найдена", Toast.LENGTH_SHORT).show()
+        }
+
+        exhibitionEditButton.setOnClickListener{
+            val intent = Intent(this, EditExhibition::class.java)
+            intent.putExtra("EXHIBITION_ID", exhibitionId)
+            startActivity(intent)
         }
     }
 
@@ -85,9 +91,7 @@ class ExhibitionDetails : AppCompatActivity() {
                             myToolbar.setTitle(it.name)
                             exhibitionStartDateTextView.text = it.start_date
                             exhibitionEndDateTextView.text = it.end_date
-                            exhibitionCountryTextView.text = it.country
-                            exhibitionCityTextView.text = it.country
-                            exhibitionPlaceTextView.text = it.venue
+                            exhibitionResponsiblePersonTextView.text = it.responsible_person
                             Glide.with(this@ExhibitionDetails)
                                 .load(baseUrl + it.image)
                                 .into(exhibitionImageView)
