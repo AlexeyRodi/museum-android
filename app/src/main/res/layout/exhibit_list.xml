@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#1C1C1C"
-        app:title="Exhibits"
+        app:title="Экспонаты"
         app:titleTextColor="@color/white"
         tools:ignore="MissingConstraints" />
 

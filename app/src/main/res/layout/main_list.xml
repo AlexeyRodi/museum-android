@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#1C1C1C"
-        app:title="Hermitage"
+        app:title="Основное"
         app:titleTextColor="@color/white"
         tools:ignore="MissingConstraints" />
 
@@ -48,7 +48,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/button_bg"
             android:fontFamily="@font/inter_light"
-            android:text="Exhibitions"
+            android:text="Выставки"
             app:backgroundTint="@null"
             tools:ignore="VisualLintButtonSize" />
 
@@ -59,7 +59,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/button_bg"
             android:fontFamily="@font/inter_light"
-            android:text="Exhibits"
+            android:text="Экспонаты"
             app:backgroundTint="@null"
             tools:ignore="VisualLintButtonSize" />
 
@@ -70,7 +70,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/button_bg"
             android:fontFamily="@font/inter_light"
-            android:text="Museum Rooms"
+            android:text="Комнаты"
             app:backgroundTint="@null"
             tools:ignore="VisualLintButtonSize" />
 
