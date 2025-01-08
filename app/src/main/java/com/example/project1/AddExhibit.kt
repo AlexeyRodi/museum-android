@@ -45,6 +45,8 @@ class AddExhibit : AppCompatActivity() {
     private lateinit var exhibitRoomSpinner: Spinner
     private lateinit var buttonSaveExhibit: Button
     private lateinit var buttonChooseImage: Button
+    private var roomsList: List<MuseumRoom> = emptyList()
+
 
     private var selectedImageUri: Uri? = null
 
@@ -102,6 +104,7 @@ class AddExhibit : AppCompatActivity() {
                     val rooms = response.body() ?: emptyList()
 
                     withContext(Dispatchers.Main) {
+                        roomsList = rooms // Сохраняем список комнат с их ID
                         val roomNumbers = rooms.map { it.room_number }
                         val adapter = ArrayAdapter(
                             this@AddExhibit,
@@ -137,7 +140,7 @@ class AddExhibit : AppCompatActivity() {
         val exhibitDescription = exhibitDescriptionEditText.text.toString()
         val exhibitCreator = exhibitCreatorEditText.text.toString()
         val exhibitYear = exhibitYearEditText.text.toString().toIntOrNull()
-        val exhibitRoom = exhibitRoomSpinner.selectedItem.toString().toIntOrNull()
+        val exhibitRoom = exhibitRoomSpinner.selectedItem.toString()
 
         if (exhibitName.isBlank() || exhibitDescription.isBlank() || exhibitYear == null || exhibitCreator.isBlank() || exhibitRoom == null) {
             Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
@@ -146,15 +149,25 @@ class AddExhibit : AppCompatActivity() {
 
         val exhibitImage = selectedImageUri?.let { convertImageToBase64(it) } ?: ""
 
+        val exhibitRoomId = roomsList.find { it.room_number == exhibitRoom }?.room_id
+
+        if (exhibitRoomId == null) {
+            Toast.makeText(this, "Комната не найдена", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val exhibit = Exhibit(
             exhibit_id = null,
             name = exhibitName,
             description = exhibitDescription,
             creation_year = exhibitYear,
             creator = exhibitCreator,
-            room = exhibitRoom,
+            room = exhibitRoomId,
             image_upload = exhibitImage
         )
+
+        val exhibitJson = Gson().toJson(exhibit)
+        Log.d("ExhibitJson", exhibitJson)
 
         val repository = ApiClient.retrofit.create(ExhibitRepository::class.java)
         val call = repository.addExhibit(exhibit)
