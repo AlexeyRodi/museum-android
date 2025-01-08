@@ -1,4 +1,4 @@
-package com.example.project1
+package com.example.project1.exhibitionActivities
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -15,14 +15,15 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.project1.museumroom.MuseumRoomRepository
+import com.example.project1.ApiClient
+import com.example.project1.R
+import com.example.project1.exhibition.ExhibitionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
-class RoomList : AppCompatActivity() {
+class ExhibitionList : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +33,7 @@ class RoomList : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         enableEdgeToEdge()
-        setContentView(R.layout.room_list)
+        setContentView(R.layout.exhibition_list)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -45,21 +46,21 @@ class RoomList : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val buttonsContainer: LinearLayout = findViewById(R.id.buttonsContainer)
-        val buttonAddRoom: Button = findViewById(R.id.buttonAddRoom)
+        val buttonAddExhibition: Button = findViewById(R.id.buttonAddExhibition)
 
-        val api = ApiClient.retrofit.create(MuseumRoomRepository::class.java)
+        val api = ApiClient.retrofit.create(ExhibitionRepository::class.java)
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = api.getMuseumRoom().execute()
+                val response = api.getExhibitions().execute()
 
                 if (response.isSuccessful) {
-                    val rooms = response.body() ?: emptyList()
+                    val exhibitions = response.body() ?: emptyList()
 
                     withContext(Dispatchers.Main) {
-                        for (room in rooms) {
-                            val button = Button(this@RoomList).apply {
-                                text = "Комната ${room.room_number}"
+                        for (exhibition in exhibitions) {
+                            val button = Button(this@ExhibitionList).apply {
+                                text = exhibition.name
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -74,16 +75,19 @@ class RoomList : AppCompatActivity() {
                                 setTypeface(typeface)
                             }
                             button.setOnClickListener {
+                                val intent = Intent(this@ExhibitionList, ExhibitionDetails::class.java)
+
+                                intent.putExtra(
+                                    "EXHIBITION_ID",
+                                    exhibition.exhibition_id
+                                )
+                                startActivity(intent)
+
                                 Toast.makeText(
-                                    this@RoomList,
-                                    "Выбрана комната: ${room.room_id}",
+                                    this@ExhibitionList,
+                                    "Выбрана выставка: ${exhibition.name}",
                                     Toast.LENGTH_SHORT
                                 ).show()
-
-                                val intent = Intent(this@RoomList, RoomDetails::class.java)
-                                intent.putExtra("ROOM_ID", room.room_id)
-                                intent.putExtra("room_description", room.description)
-                                startActivity(intent)
                             }
                             buttonsContainer.addView(button)
                         }
@@ -91,7 +95,7 @@ class RoomList : AppCompatActivity() {
                 } else {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
-                            this@RoomList,
+                            this@ExhibitionList,
                             "Ошибка: ${response.code()} ${response.message()}",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -100,16 +104,16 @@ class RoomList : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
-                        this@RoomList,
-                        "Ошибка загрузки комнат: ${e.message}",
+                        this@ExhibitionList,
+                        "Ошибка загрузки выставок: ${e.message}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             }
         }
 
-        buttonAddRoom.setOnClickListener {
-            val intent = Intent(this@RoomList, AddRoom::class.java)
+        buttonAddExhibition.setOnClickListener {
+            val intent = Intent(this@ExhibitionList, AddExhibition::class.java)
             startActivity(intent)
         }
     }

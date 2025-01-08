@@ -1,4 +1,4 @@
-package com.example.project1
+package com.example.project1.exhibitionActivities
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -16,6 +16,9 @@ import androidx.core.view.WindowInsetsCompat
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.example.project1.ApiClient
+import com.example.project1.MainList
+import com.example.project1.R
 import com.example.project1.exhibition.ExhibitionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

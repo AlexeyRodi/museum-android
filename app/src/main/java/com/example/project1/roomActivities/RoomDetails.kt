@@ -1,4 +1,4 @@
-package com.example.project1
+package com.example.project1.roomActivities
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,6 +15,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.project1.ApiClient
+import com.example.project1.MainList
+import com.example.project1.R
+import com.example.project1.exhibitActivities.ExhibitDetails
 import com.example.project1.museumroom.MuseumRoomRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -185,7 +189,7 @@ class RoomDetails : AppCompatActivity() {
                             "Комната успешно удалена",
                             Toast.LENGTH_SHORT
                         ).show()
-                        val intent = Intent(this@RoomDetails, RoomList::class.java)
+                        val intent = Intent(this@RoomDetails, MainList::class.java)
                         startActivity(intent)
                     }
                 } else {

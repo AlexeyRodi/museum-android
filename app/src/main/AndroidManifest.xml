@@ -16,34 +16,34 @@
         android:theme="@style/Theme.Project1"
         tools:targetApi="31">
         <activity
-            android:name=".EditRoom"
+            android:name=".roomActivities.EditRoom"
             android:exported="false" />
         <activity
-            android:name=".AddRoom"
+            android:name=".roomActivities.AddRoom"
             android:exported="false" />
         <activity
-            android:name=".RoomDetails"
+            android:name=".roomActivities.RoomDetails"
             android:exported="false" />
         <activity
-            android:name=".AddExhibition"
+            android:name=".exhibitionActivities.AddExhibition"
             android:exported="false" />
         <activity
-            android:name=".AddExhibit"
+            android:name=".exhibitActivities.AddExhibit"
             android:exported="false" />
         <activity
-            android:name=".EditExhibition"
+            android:name=".exhibitionActivities.EditExhibition"
             android:exported="false" />
         <activity
-            android:name=".EditExhibit"
+            android:name=".exhibitActivities.EditExhibit"
             android:exported="false" />
         <activity
-            android:name=".ExhibitionDetails"
+            android:name=".exhibitionActivities.ExhibitionDetails"
             android:exported="true" />
         <activity
-            android:name=".ExhibitDetails"
+            android:name=".exhibitActivities.ExhibitDetails"
             android:exported="true" />
         <activity
-            android:name=".ExhibitList"
+            android:name=".exhibitActivities.ExhibitList"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
@@ -58,10 +58,10 @@
             android:name=".MainList"
             android:exported="true" />
         <activity
-            android:name=".ExhibitionList"
+            android:name=".exhibitionActivities.ExhibitionList"
             android:exported="true" />
         <activity
-            android:name=".RoomList"
+            android:name=".roomActivities.RoomList"
             android:exported="true" />
     </application>
 

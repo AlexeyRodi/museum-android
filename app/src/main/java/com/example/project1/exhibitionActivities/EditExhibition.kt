@@ -1,4 +1,4 @@
-package com.example.project1
+package com.example.project1.exhibitionActivities
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -19,6 +19,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.widget.Toast
+import com.example.project1.ApiClient
+import com.example.project1.MainList
+import com.example.project1.R
 import com.example.project1.exhibition.Exhibition
 import com.example.project1.exhibition.ExhibitionRepository
 import com.google.gson.Gson
