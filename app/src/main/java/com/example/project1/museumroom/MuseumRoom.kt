@@ -4,6 +4,5 @@ data class MuseumRoom(
     val room_id: Int,
     val room_number: String,
     val description: String,
-    val museum: Int,
 )
 

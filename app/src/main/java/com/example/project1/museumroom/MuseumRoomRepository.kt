@@ -9,6 +9,9 @@ interface MuseumRoomRepository {
     @GET("api/rooms")
     fun getMuseumRoom(): Call<List<MuseumRoom>>
 
-    @GET("api/exhibits/by-room/{room_number}")
-    fun getExhibitsByRoomNumber(@Path("room_number") roomNumber: Int): Call<List<Exhibit>>
+    @GET("api/rooms/{room_id}")
+    fun getRoomDetails(@Path("room_id") roomId: Int): Call<MuseumRoom>
+
+    @GET("api/rooms/{room_id}/exhibits")
+    fun getExhibitsByRoomId(@Path("room_id") roomId: Int): Call<List<Exhibit>>
 }

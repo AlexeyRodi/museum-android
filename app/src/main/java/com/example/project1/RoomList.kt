@@ -81,7 +81,8 @@ class RoomList : AppCompatActivity() {
                                 ).show()
 
                                 val intent = Intent(this@RoomList, RoomDetails::class.java)
-                                intent.putExtra("room_number", room.room_number.toInt())
+                                intent.putExtra("room_id", room.room_id)
+                                intent.putExtra("room_description", room.description)
                                 startActivity(intent)
                             }
                             buttonsContainer.addView(button)

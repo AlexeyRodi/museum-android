@@ -42,6 +42,20 @@
         tools:ignore="MissingConstraints">
     </LinearLayout>
 
+    <Button
+        android:id="@+id/buttonEditRoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/button_bg"
+        android:fontFamily="@font/inter_light"
+        android:text="Добавить"
+        app:backgroundTint="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonsContainer"
+        tools:ignore="VisualLintButtonSize" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
