@@ -43,7 +43,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/buttonEditRoom"
+        android:id="@+id/buttonAddRoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

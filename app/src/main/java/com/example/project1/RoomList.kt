@@ -46,6 +46,7 @@ class RoomList : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val buttonsContainer: LinearLayout = findViewById(R.id.buttonsContainer)
+        val buttonAddRoom: Button = findViewById(R.id.buttonAddRoom)
 
         val api = ApiClient.retrofit.create(MuseumRoomRepository::class.java)
 
@@ -106,6 +107,11 @@ class RoomList : AppCompatActivity() {
                     ).show()
                 }
             }
+        }
+
+        buttonAddRoom.setOnClickListener {
+            val intent = Intent(this@RoomList, AddRoom::class.java)
+            startActivity(intent)
         }
     }
 
