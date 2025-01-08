@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.project1.exhibit.ExhibitRepository
+import com.example.project1.museumroom.MuseumRoomRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -102,7 +103,9 @@ class ExhibitDetails : AppCompatActivity() {
                             exhibitDescriptionTextView.text = it.description
                             exhibitCreatorTextView.text = it.creator
                             exhibitYearTextView.text = it.creation_year.toString()
-                            exhibitRoomTextView.text = it.room.toString()
+                            loadRoomNumber(it.room) { roomNumber ->
+                                exhibitRoomTextView.text = roomNumber
+                            }
                             Glide.with(this@ExhibitDetails)
                                 .load(baseUrl + it.image)
                                 .into(exhibitImageView)
@@ -119,6 +122,46 @@ class ExhibitDetails : AppCompatActivity() {
                         Toast.makeText(
                             this@ExhibitDetails,
                             "Ошибка загрузки данных: ${response.code()} ${response.message()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@ExhibitDetails,
+                        "Ошибка: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun loadRoomNumber(roomId:Int, onRoomLoaded: (String) -> Unit){
+        val api = ApiClient.retrofit.create(MuseumRoomRepository::class.java)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.getMuseumRoom().execute()
+
+                if (response.isSuccessful) {
+                    val rooms = response.body() ?: emptyList()
+                    val room = rooms.find { it.room_id == roomId }
+
+                    withContext(Dispatchers.Main) {
+                        if (room != null) {
+                            // Возвращаем номер комнаты через callback
+                            onRoomLoaded(room.room_number)
+                        } else {
+                            exhibitRoomTextView.text = "Комната не найдена"
+                        }
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@ExhibitDetails,
+                            "Ошибка загрузки комнат: ${response.code()} ${response.message()}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }

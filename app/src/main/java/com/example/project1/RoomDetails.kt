@@ -27,6 +27,7 @@ class RoomDetails : AppCompatActivity() {
 
     private lateinit var roomDescriptionTextView: TextView
     private lateinit var buttonsContainer: LinearLayout
+    private lateinit var buttonEditRoomButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +49,7 @@ class RoomDetails : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val roomId = intent.getIntExtra("room_id", -1)
+        val roomId = intent.getIntExtra("ROOM_ID", -1)
         if (roomId == -1) {
             Toast.makeText(this, "Ошибка: идентификатор комнаты не найден", Toast.LENGTH_SHORT)
                 .show()
@@ -58,12 +59,19 @@ class RoomDetails : AppCompatActivity() {
 
         buttonsContainer = findViewById(R.id.buttonsContainer)
         roomDescriptionTextView = findViewById(R.id.roomDescription)
+        buttonEditRoomButton = findViewById(R.id.buttonEditRoom)
+
+        buttonEditRoomButton.setOnClickListener {
+            val intent = Intent(this, EditRoom::class.java)
+            intent.putExtra("ROOM_ID", roomId)
+            startActivity(intent)
+        }
 
         CoroutineScope(Dispatchers.IO).launch {
             val api = ApiClient.retrofit.create(MuseumRoomRepository::class.java)
             try {
                 val response = api.getExhibitsByRoomId(roomId)
-                    .execute() // Запрос к API для получения экспонатов
+                    .execute()
                 if (response.isSuccessful) {
                     val exhibits = response.body() ?: emptyList()
                     withContext(Dispatchers.Main) {

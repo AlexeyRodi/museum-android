@@ -14,8 +14,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.widget.Toast
-import com.example.project1.exhibition.Exhibition
-import com.example.project1.exhibition.ExhibitionRepository
 import com.example.project1.museumroom.MuseumRoom
 import com.example.project1.museumroom.MuseumRoomRepository
 import retrofit2.Call

@@ -48,6 +48,8 @@ class EditExhibit : AppCompatActivity() {
 
     private lateinit var initialImage: String
     private var selectedImageUri: Uri? = null
+    private var roomsList: List<MuseumRoom> = emptyList()
+
 
     private val PICK_IMAGE_REQUEST = 1
 
@@ -97,13 +99,16 @@ class EditExhibit : AppCompatActivity() {
             val exhibitDescription = exhibitDescriptionEditText.text.toString()
             val exhibitCreator = exhibitCreatorEditText.text.toString()
             val exhibitYear = exhibitYearEditText.text.toString()
-            val exhibitRoom = exhibitRoomSpinner.selectedItem.toString().toIntOrNull()
+            val exhibitRoom = exhibitRoomSpinner.selectedItem.toString()
 
 
             if (exhibitName.isBlank() || exhibitDescription.isBlank() || exhibitYear == null || exhibitCreator.isBlank() || exhibitRoom == null) {
                 Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            val selectedRoom = roomsList.find { it.room_number == exhibitRoom }
+            val exhibitRoomId = selectedRoom?.room_id ?: 0
 
             val exhibitImage = selectedImageUri?.let { convertImageToBase64(it) } ?: ""
 
@@ -118,7 +123,7 @@ class EditExhibit : AppCompatActivity() {
                     description = exhibitDescription,
                     creation_year = exhibitYear.toInt(),
                     creator = exhibitCreator,
-                    room = exhibitRoom,
+                    room = exhibitRoomId,
                     image_upload = base64Image
                 )
 
@@ -133,7 +138,7 @@ class EditExhibit : AppCompatActivity() {
                     description = exhibitDescription,
                     creation_year = exhibitYear.toInt(),
                     creator = exhibitCreator,
-                    room = exhibitRoom,
+                    room = exhibitRoomId,
                     image_upload = exhibitImage
                 )
 
@@ -158,6 +163,7 @@ class EditExhibit : AppCompatActivity() {
                     val rooms = response.body() ?: emptyList()
 
                     withContext(Dispatchers.Main) {
+                        roomsList = rooms // Сохраняем список комнат с их ID
                         val roomNumbers = rooms.map { it.room_number }
                         val adapter = ArrayAdapter(
                             this@EditExhibit,
@@ -167,6 +173,7 @@ class EditExhibit : AppCompatActivity() {
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                         exhibitRoomSpinner.adapter = adapter
 
+                        // Устанавливаем выбранную комнату по ID
                         setRoomSelectionById(exhibitRoomId, rooms)
                     }
                 } else {
@@ -189,6 +196,7 @@ class EditExhibit : AppCompatActivity() {
             }
         }
     }
+
 
     private fun setRoomSelectionById(exhibitRoomId: Int, rooms: List<MuseumRoom>) {
         val room = rooms.find { it.room_id == exhibitRoomId }
@@ -225,6 +233,7 @@ class EditExhibit : AppCompatActivity() {
                             initialImage = it.image.toString()
 
                             loadRooms(it.room)
+                            
 
                         } ?: run {
                             Toast.makeText(

@@ -77,12 +77,12 @@ class RoomList : AppCompatActivity() {
                             button.setOnClickListener {
                                 Toast.makeText(
                                     this@RoomList,
-                                    "Выбрана комната: ${room.room_number}",
+                                    "Выбрана комната: ${room.room_id}",
                                     Toast.LENGTH_SHORT
                                 ).show()
 
                                 val intent = Intent(this@RoomList, RoomDetails::class.java)
-                                intent.putExtra("room_id", room.room_id)
+                                intent.putExtra("ROOM_ID", room.room_id)
                                 intent.putExtra("room_description", room.description)
                                 startActivity(intent)
                             }
