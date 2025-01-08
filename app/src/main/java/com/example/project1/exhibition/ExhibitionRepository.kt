@@ -2,6 +2,7 @@ package com.example.project1.exhibition
 
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -19,4 +20,7 @@ interface ExhibitionRepository {
 
     @POST("api/exhibitions/add/")
     fun addExhibition(@Body exhibition: Exhibition): Call<Exhibition>
+
+    @DELETE("api/exhibitions/delete/{exhibition_id}/")
+    fun deleteExhibition(@Path("exhibition_id") id: Int): Call<Void>
 }

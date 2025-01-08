@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.example.project1.exhibit.ExhibitRepository
 import com.example.project1.exhibition.ExhibitionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +29,7 @@ class ExhibitionDetails : AppCompatActivity() {
     private lateinit var exhibitionResponsiblePersonTextView: TextView
     private lateinit var exhibitionEditButton: Button
     private lateinit var exhibitionImageView: ImageView
+    private lateinit var exhibitionDeleteButton: Button
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +58,7 @@ class ExhibitionDetails : AppCompatActivity() {
         exhibitionResponsiblePersonTextView = findViewById(R.id.exhibitionResponsiblePerson)
         exhibitionImageView = findViewById(R.id.exhibitionImage)
         exhibitionEditButton = findViewById(R.id.buttonEditExhibition)
+        exhibitionDeleteButton = findViewById(R.id.buttonDeleteExhibition)
 
         val exhibitionId = intent.getIntExtra("EXHIBITION_ID", -1)
 
@@ -69,6 +72,10 @@ class ExhibitionDetails : AppCompatActivity() {
             val intent = Intent(this, EditExhibition::class.java)
             intent.putExtra("EXHIBITION_ID", exhibitionId)
             startActivity(intent)
+        }
+
+        exhibitionDeleteButton.setOnClickListener {
+            deleteExhibition(exhibitionId)
         }
     }
 
@@ -108,6 +115,43 @@ class ExhibitionDetails : AppCompatActivity() {
                         Toast.makeText(
                             this@ExhibitionDetails,
                             "Ошибка загрузки данных: ${response.code()} ${response.message()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@ExhibitionDetails,
+                        "Ошибка: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun deleteExhibition(exhibitionId: Int) {
+        val api = ApiClient.retrofit.create(ExhibitionRepository::class.java)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.deleteExhibition(exhibitionId).execute()
+                if (response.isSuccessful) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@ExhibitionDetails,
+                            "Выставка успешно удалена",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        val intent = Intent(this@ExhibitionDetails, ExhibitionList::class.java)
+                        startActivity(intent)
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@ExhibitionDetails,
+                            "Ошибка удаления: ${response.code()} ${response.message()}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
