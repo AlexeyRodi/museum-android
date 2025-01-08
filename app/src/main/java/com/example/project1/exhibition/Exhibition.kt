@@ -1,9 +1,7 @@
 package com.example.project1.exhibition
 
-import java.util.Date
-
 data class Exhibition(
-    val exhibition_id: Int,
+    val exhibition_id: Int?,
     val name: String,
     val start_date: String,
     val end_date: String,

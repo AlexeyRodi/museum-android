@@ -19,7 +19,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.widget.Toast
-import androidx.core.net.toUri
 import com.example.project1.exhibition.Exhibition
 import com.example.project1.exhibition.ExhibitionRepository
 import com.google.gson.Gson
@@ -33,8 +32,6 @@ import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.net.URLDecoder
-
 
 class EditExhibition : AppCompatActivity() {
     private lateinit var exhibitionStartDate: EditText
@@ -196,7 +193,7 @@ class EditExhibition : AppCompatActivity() {
         )
         val repository = ApiClient.retrofit.create(ExhibitionRepository::class.java)
 
-        val call = repository.updateExhibition(exhibition.exhibition_id, exhibition)
+        val call = repository.updateExhibition(exhibition.exhibition_id!!, exhibition)
 
         call.enqueue(object : Callback<Exhibition> {
             override fun onResponse(call: Call<Exhibition>, response: Response<Exhibition>) {

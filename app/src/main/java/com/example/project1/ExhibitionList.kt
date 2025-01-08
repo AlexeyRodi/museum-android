@@ -44,6 +44,7 @@ class ExhibitionList : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val buttonsContainer: LinearLayout = findViewById(R.id.buttonsContainer)
+        val buttonAddExhibition: Button = findViewById(R.id.buttonAddExhibition)
 
         val api = ApiClient.retrofit.create(ExhibitionRepository::class.java)
 
@@ -107,6 +108,11 @@ class ExhibitionList : AppCompatActivity() {
                     ).show()
                 }
             }
+        }
+
+        buttonAddExhibition.setOnClickListener {
+            val intent = Intent(this@ExhibitionList, AddExhibition::class.java)
+            startActivity(intent)
         }
     }
 
