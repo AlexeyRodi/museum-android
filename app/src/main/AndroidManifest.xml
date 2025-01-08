@@ -16,16 +16,16 @@
         android:theme="@style/Theme.Project1"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity8"
+            android:name=".EditExhibit"
             android:exported="false" />
         <activity
-            android:name=".MainActivity7"
+            android:name=".ExhibitionDetails"
             android:exported="true" />
         <activity
-            android:name=".MainActivity6"
+            android:name=".ExhibitDetails"
             android:exported="true" />
         <activity
-            android:name=".MainActivity5"
+            android:name=".ExhibitList"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
@@ -37,13 +37,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity2"
+            android:name=".MainList"
             android:exported="true" />
         <activity
-            android:name=".MainActivity3"
+            android:name=".ExhibitionList"
             android:exported="true" />
         <activity
-            android:name=".MainActivity4"
+            android:name=".RoomList"
             android:exported="true" />
     </application>
 

@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         val buttonNavigate: Button = findViewById(R.id.Button1)
 
         buttonNavigate.setOnClickListener {
-            val intent = Intent(this, MainActivity2::class.java)
+            val intent = Intent(this, MainList::class.java)
             startActivity(intent)
         }
     }

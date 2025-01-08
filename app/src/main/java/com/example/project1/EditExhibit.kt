@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
 import android.view.Window
@@ -38,7 +37,7 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 
-class MainActivity8 : AppCompatActivity() {
+class EditExhibit : AppCompatActivity() {
     private lateinit var exhibitDescriptionEditText: EditText
     private lateinit var exhibitCreatorEditText: EditText
     private lateinit var exhibitYearEditText: EditText
@@ -58,7 +57,7 @@ class MainActivity8 : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main8)
+        setContentView(R.layout.edit_exhibit)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -66,7 +65,7 @@ class MainActivity8 : AppCompatActivity() {
             insets
         }
 
-        val myToolbar: Toolbar = findViewById(R.id.my_toolbar8)
+        val myToolbar: Toolbar = findViewById(R.id.my_toolbar)
         setSupportActionBar(myToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -137,7 +136,7 @@ class MainActivity8 : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         val roomNumbers = rooms.map { it.room_number }
                         val adapter = ArrayAdapter(
-                            this@MainActivity8,
+                            this@EditExhibit,
                             android.R.layout.simple_spinner_item,
                             roomNumbers
                         )
@@ -149,7 +148,7 @@ class MainActivity8 : AppCompatActivity() {
                 } else {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
-                            this@MainActivity8,
+                            this@EditExhibit,
                             "Ошибка загрузки комнат: ${response.code()} ${response.message()}",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -158,7 +157,7 @@ class MainActivity8 : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
-                        this@MainActivity8,
+                        this@EditExhibit,
                         "Ошибка: ${e.message}",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -181,7 +180,7 @@ class MainActivity8 : AppCompatActivity() {
 
     @SuppressLint("SuspiciousIndentation")
     private fun loadExhibitDetails(exhibitId: Int) {
-        val myToolbar: Toolbar = findViewById(R.id.my_toolbar8)
+        val myToolbar: Toolbar = findViewById(R.id.my_toolbar)
         val api = ApiClient.retrofit.create(ExhibitRepository::class.java)
         val baseUrl = "http://10.0.2.2:8000"
 
@@ -204,7 +203,7 @@ class MainActivity8 : AppCompatActivity() {
 
                         } ?: run {
                             Toast.makeText(
-                                this@MainActivity8,
+                                this@EditExhibit,
                                 "Детали экспоната не найдены",
                                 Toast.LENGTH_SHORT
                             ).show()
@@ -213,7 +212,7 @@ class MainActivity8 : AppCompatActivity() {
                 } else {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
-                            this@MainActivity8,
+                            this@EditExhibit,
                             "Ошибка загрузки данных: ${response.code()} ${response.message()}",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -222,7 +221,7 @@ class MainActivity8 : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
-                        this@MainActivity8,
+                        this@EditExhibit,
                         "Ошибка: ${e.message}",
                         Toast.LENGTH_SHORT
                     ).show()
@@ -242,8 +241,8 @@ class MainActivity8 : AppCompatActivity() {
         call.enqueue(object : Callback<Exhibit> {
             override fun onResponse(call: Call<Exhibit>, response: Response<Exhibit>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@MainActivity8, "Данные обновлены успешно!", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@MainActivity8, MainActivity6::class.java)
+                    Toast.makeText(this@EditExhibit, "Данные обновлены успешно!", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@EditExhibit, ExhibitDetails::class.java)
 
                     intent.putExtra(
                         "EXHIBIT_ID",
@@ -251,12 +250,12 @@ class MainActivity8 : AppCompatActivity() {
                     )
                     startActivity(intent)
                 } else {
-                    Toast.makeText(this@MainActivity8, "Ошибка обновления: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditExhibit, "Ошибка обновления: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<Exhibit>, t: Throwable) {
-                Toast.makeText(this@MainActivity8, "Ошибка сети: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@EditExhibit, "Ошибка сети: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }

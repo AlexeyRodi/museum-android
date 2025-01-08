@@ -1,12 +1,10 @@
 package com.example.project1
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,20 +14,21 @@ import androidx.core.view.WindowInsetsCompat
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.example.project1.exhibit.ExhibitRepository
+import com.example.project1.exhibition.ExhibitionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity6 : AppCompatActivity() {
-    private lateinit var exhibitDescriptionTextView: TextView
-    private lateinit var exhibitCreatorTextView: TextView
-    private lateinit var exhibitYearTextView: TextView
-    private lateinit var exhibitRoomTextView: TextView
-    private lateinit var exhibitImageView: ImageView
-    private lateinit var exhibitEditButton: Button
+class ExhibitionDetails : AppCompatActivity() {
+    private lateinit var exhibitionStartDateTextView: TextView
+    private lateinit var exhibitionEndDateTextView: TextView
+    private lateinit var exhibitionCountryTextView: TextView
+    private lateinit var exhibitionCityTextView: TextView
+    private lateinit var exhibitionPlaceTextView: TextView
+    private lateinit var exhibitionImageView: ImageView
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -38,7 +37,7 @@ class MainActivity6 : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main6)
+        setContentView(R.layout.exhibition_details)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -46,63 +45,56 @@ class MainActivity6 : AppCompatActivity() {
             insets
         }
 
-        val myToolbar: Toolbar = findViewById(R.id.my_toolbar6)
+        val myToolbar: Toolbar = findViewById(R.id.my_toolbar)
         setSupportActionBar(myToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        exhibitDescriptionTextView = findViewById(R.id.exhibitDescription)
-        exhibitCreatorTextView = findViewById(R.id.exhibitCreator)
-        exhibitYearTextView = findViewById(R.id.exhibitYear)
-        exhibitRoomTextView = findViewById(R.id.exhibitRoom)
-        exhibitImageView = findViewById(R.id.exhibitImage)
-        exhibitEditButton = findViewById(R.id.buttonEditExhibit)
+        exhibitionStartDateTextView = findViewById(R.id.exhibitionStartDate)
+        exhibitionEndDateTextView = findViewById(R.id.exhibitionEndDate)
+        exhibitionCountryTextView = findViewById(R.id.exhibitionCountry)
+        exhibitionCityTextView = findViewById(R.id.exhibitionCity)
+        exhibitionPlaceTextView = findViewById(R.id.exhibitionPlace)
+        exhibitionImageView = findViewById(R.id.exhibitionImage)
 
-        val exhibitId = intent.getIntExtra("EXHIBIT_ID", -1)
-        val exhibitRoomId = intent.getIntExtra("EXHIBIT_ROOM", -1) // Если room - ID (число)
+        val exhibitionId = intent.getIntExtra("EXHIBITION_ID", -1)
 
-        if (exhibitId != -1) {
-            loadExhibitDetails(exhibitId)
+        if (exhibitionId != -1) {
+            loadExhibitionDetails(exhibitionId)
         } else {
-            Toast.makeText(this, "Ошибка: экспонат не найден", Toast.LENGTH_SHORT).show()
-        }
-
-        exhibitEditButton.setOnClickListener{
-            val intent = Intent(this, MainActivity8::class.java)
-            intent.putExtra("EXHIBIT_ID", exhibitId)
-            intent.putExtra("EXHIBIT_ROOM", exhibitRoomId)
-            startActivity(intent)
+            Toast.makeText(this, "Ошибка: выставка не найдена", Toast.LENGTH_SHORT).show()
         }
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun loadExhibitDetails(exhibitId: Int) {
-        val myToolbar: Toolbar = findViewById(R.id.my_toolbar6)
-        val api = ApiClient.retrofit.create(ExhibitRepository::class.java)
+    private fun loadExhibitionDetails(exhibitionId: Int) {
+        val myToolbar: Toolbar = findViewById(R.id.my_toolbar)
+        val api = ApiClient.retrofit.create(ExhibitionRepository::class.java)
         val baseUrl = "http://10.0.2.2:8000"
 
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = api.getExhibitDetails(exhibitId).execute()
+                val response = api.getExhibitionDetail(exhibitionId).execute()
 
-                    if (response.isSuccessful) {
-                    val exhibit = response.body()
+                if (response.isSuccessful) {
+                    val exhibition = response.body()
 
                     withContext(Dispatchers.Main) {
-                        exhibit?.let {
+                        exhibition?.let {
                             myToolbar.setTitle(it.name)
-                            exhibitDescriptionTextView.text = it.description
-                            exhibitCreatorTextView.text = it.creator
-                            exhibitYearTextView.text = it.creation_year.toString()
-                            exhibitRoomTextView.text = it.room.toString()
-                            Glide.with(this@MainActivity6)
+                            exhibitionStartDateTextView.text = it.start_date
+                            exhibitionEndDateTextView.text = it.end_date
+                            exhibitionCountryTextView.text = it.country
+                            exhibitionCityTextView.text = it.country
+                            exhibitionPlaceTextView.text = it.venue
+                            Glide.with(this@ExhibitionDetails)
                                 .load(baseUrl + it.image)
-                                .into(exhibitImageView)
+                                .into(exhibitionImageView)
                         } ?: run {
                             Toast.makeText(
-                                this@MainActivity6,
-                                "Детали экспоната не найдены",
+                                this@ExhibitionDetails,
+                                "Детали выставки не найдены",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -110,7 +102,7 @@ class MainActivity6 : AppCompatActivity() {
                 } else {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
-                            this@MainActivity6,
+                            this@ExhibitionDetails,
                             "Ошибка загрузки данных: ${response.code()} ${response.message()}",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -119,7 +111,7 @@ class MainActivity6 : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
-                        this@MainActivity6,
+                        this@ExhibitionDetails,
                         "Ошибка: ${e.message}",
                         Toast.LENGTH_SHORT
                     ).show()

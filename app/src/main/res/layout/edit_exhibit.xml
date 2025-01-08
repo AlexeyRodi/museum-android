@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1C1C1C"
-    android:fillViewport="true"
-    tools:context=".MainActivity7">
+    tools:context=".EditExhibit">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
@@ -15,22 +14,12 @@
         android:background="#1C1C1C">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/my_toolbar7"
+            android:id="@+id/my_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#1C1C1C"
-            app:title="Название выставки"
+            app:title="Название экспоната"
             app:titleTextColor="@color/white"
-            tools:ignore="MissingConstraints" />
-
-        <ImageView
-            android:id="@+id/exhibitionImage"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/my_toolbar7"
             tools:ignore="MissingConstraints" />
 
         <ImageView
@@ -47,175 +36,156 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/labelStartDate"
+            android:id="@+id/labelDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/inter_light"
-            android:text="Дата начала:"
+            android:text="Описание:"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/exhibitionImage" />
+            app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
 
-        <TextView
-            android:id="@+id/exhibitionStartDate"
+        <EditText
+            android:id="@+id/exhibitDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/inter_light"
-            android:text="Здесь будет дата начала"
+            android:text="Здесь будет описание экспоната"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/labelStartDate" />
+            app:layout_constraintTop_toBottomOf="@id/labelDescription" />
 
         <TextView
-            android:id="@+id/labelEndDate"
+            android:id="@+id/labelCreator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/inter_light"
-            android:text="Дата окончания:"
+            android:text="Автор:"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/exhibitionStartDate" />
+            app:layout_constraintTop_toBottomOf="@id/exhibitDescription" />
 
-        <TextView
-            android:id="@+id/exhibitionEndDate"
+        <EditText
+            android:id="@+id/exhibitCreator"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/inter_light"
-            android:text="Здесь будет дата окончания"
+            android:text="Здесь будет имя автора"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/labelEndDate" />
+            app:layout_constraintTop_toBottomOf="@id/labelCreator" />
 
         <TextView
-            android:id="@+id/labelCountry"
+            android:id="@+id/labelYear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/inter_light"
-            android:text="Страна:"
+            android:text="Год создания:"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/exhibitionEndDate" />
+            app:layout_constraintTop_toBottomOf="@id/exhibitCreator" />
 
-        <TextView
-            android:id="@+id/exhibitionCountry"
+        <EditText
+            android:id="@+id/exhibitYear"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/inter_light"
-            android:text="Здесь будет страна"
+            android:text="Здесь будет год создания"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/labelCountry" />
+            app:layout_constraintTop_toBottomOf="@id/labelYear" />
 
         <TextView
-            android:id="@+id/labelCity"
+            android:id="@+id/labelRoom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/inter_light"
-            android:text="Город:"
+            android:text="Комната:"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/exhibitionCountry" />
+            app:layout_constraintTop_toBottomOf="@id/exhibitYear" />
 
-        <TextView
-            android:id="@+id/exhibitionCity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/inter_light"
-            android:text="Здесь будет город"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/labelCity" />
-
-        <TextView
-            android:id="@+id/labelPlace"
-            android:layout_width="wrap_content"
+        <Spinner
+            android:id="@+id/roomSpinner"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/inter_light"
-            android:text="Место проведения:"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/exhibitionCity" />
-
-        <TextView
-            android:id="@+id/exhibitionPlace"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:fontFamily="@font/inter_light"
-            android:text="Здесь будет место проведения"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/labelPlace" />
-
-        <Button
-            android:id="@+id/buttonEditExhibition"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="35dp"
             android:background="@drawable/button_bg"
             android:fontFamily="@font/inter_light"
-            android:text="Изменить"
-            app:backgroundTint="@null"
+            android:spinnerMode="dropdown"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/exhibitionPlace"
+            app:layout_constraintTop_toBottomOf="@id/labelRoom" />
+
+        <TextView
+            android:id="@+id/labelImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="28dp"
+            android:fontFamily="@font/inter_light"
+            android:text="Изображение:"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/roomSpinner" />
+
+        <Button
+            android:id="@+id/buttonСhooseImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/button_bg"
+            android:fontFamily="@font/inter_light"
+            android:text="Выбрать изображение"
+            app:backgroundTint="@null"
+            app:layout_constraintStart_toEndOf="@+id/labelImage"
+            app:layout_constraintTop_toBottomOf="@+id/roomSpinner"
             tools:ignore="VisualLintButtonSize" />
 
         <Button
-            android:id="@+id/buttonDeleteExhibition"
+            android:id="@+id/buttonSaveExhibit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/button_bg"
             android:fontFamily="@font/inter_light"
-            android:text="Удалить"
+            android:text="Сохранить"
             app:backgroundTint="@null"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.12"
-            app:layout_constraintStart_toEndOf="@+id/buttonEditExhibition"
-            app:layout_constraintTop_toBottomOf="@+id/exhibitionPlace"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonСhooseImage"
             tools:ignore="VisualLintButtonSize" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </ScrollView>

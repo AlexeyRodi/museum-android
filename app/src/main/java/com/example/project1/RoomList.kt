@@ -1,6 +1,6 @@
 package com.example.project1
 
-import android.content.Intent
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
@@ -14,13 +14,15 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.project1.exhibition.ExhibitionRepository
+import com.example.project1.museumroom.MuseumRoomRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity3 : AppCompatActivity() {
+
+class RoomList : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -29,7 +31,7 @@ class MainActivity3 : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main3)
+        setContentView(R.layout.room_list)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -37,25 +39,25 @@ class MainActivity3 : AppCompatActivity() {
             insets
         }
 
-        val myToolbar: Toolbar = findViewById(R.id.my_toolbar2)
+        val myToolbar: Toolbar = findViewById(R.id.my_toolbar)
         setSupportActionBar(myToolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val buttonsContainer: LinearLayout = findViewById(R.id.buttonsContainer)
 
-        val api = ApiClient.retrofit.create(ExhibitionRepository::class.java)
+        val api = ApiClient.retrofit.create(MuseumRoomRepository::class.java)
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = api.getExhibitions().execute()
+                val response = api.getMuseumRoom().execute()
 
                 if (response.isSuccessful) {
-                    val exhibitions = response.body() ?: emptyList()
+                    val rooms = response.body() ?: emptyList()
 
                     withContext(Dispatchers.Main) {
-                        for (exhibition in exhibitions) {
-                            val button = Button(this@MainActivity3).apply {
-                                text = exhibition.name
+                        for (room in rooms) {
+                            val button = Button(this@RoomList).apply {
+                                text = "Комната ${room.room_number}"
                                 layoutParams = LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -70,17 +72,9 @@ class MainActivity3 : AppCompatActivity() {
                                 setTypeface(typeface)
                             }
                             button.setOnClickListener {
-                                val intent = Intent(this@MainActivity3, MainActivity7::class.java)
-
-                                intent.putExtra(
-                                    "EXHIBITION_ID",
-                                    exhibition.exhibition_id
-                                )
-                                startActivity(intent)
-
                                 Toast.makeText(
-                                    this@MainActivity3,
-                                    "Выбрана выставка: ${exhibition.name}",
+                                    this@RoomList,
+                                    "Выбрана комната: ${room.room_number}",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -90,7 +84,7 @@ class MainActivity3 : AppCompatActivity() {
                 } else {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
-                            this@MainActivity3,
+                            this@RoomList,
                             "Ошибка: ${response.code()} ${response.message()}",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -99,8 +93,8 @@ class MainActivity3 : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
-                        this@MainActivity3,
-                        "Ошибка загрузки выставок: ${e.message}",
+                        this@RoomList,
+                        "Ошибка загрузки комнат: ${e.message}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
