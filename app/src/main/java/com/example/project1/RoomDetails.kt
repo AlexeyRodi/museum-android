@@ -1,6 +1,5 @@
 package com.example.project1
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -16,7 +15,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.bumptech.glide.Glide
 import com.example.project1.museumroom.MuseumRoomRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +25,8 @@ class RoomDetails : AppCompatActivity() {
 
     private lateinit var roomDescriptionTextView: TextView
     private lateinit var buttonsContainer: LinearLayout
-    private lateinit var buttonEditRoomButton: Button
+    private lateinit var EditRoomButton: Button
+    private lateinit var DeleteRoomButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,12 +58,17 @@ class RoomDetails : AppCompatActivity() {
 
         buttonsContainer = findViewById(R.id.buttonsContainer)
         roomDescriptionTextView = findViewById(R.id.roomDescription)
-        buttonEditRoomButton = findViewById(R.id.buttonEditRoom)
+        EditRoomButton = findViewById(R.id.buttonEditRoom)
+        DeleteRoomButton = findViewById(R.id.buttonDeleteRoom)
 
-        buttonEditRoomButton.setOnClickListener {
+        EditRoomButton.setOnClickListener {
             val intent = Intent(this, EditRoom::class.java)
             intent.putExtra("ROOM_ID", roomId)
             startActivity(intent)
+        }
+
+        DeleteRoomButton.setOnClickListener {
+            deleteRoom(roomId)
         }
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -164,6 +168,43 @@ class RoomDetails : AppCompatActivity() {
                     "Выбран экспонат: ${exhibitName}",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+        }
+    }
+
+    private fun deleteRoom(roomId: Int) {
+        val api = ApiClient.retrofit.create(MuseumRoomRepository::class.java)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.deleteRoom(roomId).execute()
+                if (response.isSuccessful) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@RoomDetails,
+                            "Комната успешно удалена",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        val intent = Intent(this@RoomDetails, RoomList::class.java)
+                        startActivity(intent)
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@RoomDetails,
+                            "Ошибка удаления: ${response.code()} ${response.message()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@RoomDetails,
+                        "Ошибка: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
     }

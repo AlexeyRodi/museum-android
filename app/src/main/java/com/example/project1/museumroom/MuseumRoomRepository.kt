@@ -1,9 +1,9 @@
 package com.example.project1.museumroom
 
 import com.example.project1.exhibit.Exhibit
-import com.example.project1.exhibition.Exhibition
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -24,4 +24,7 @@ interface MuseumRoomRepository {
 
     @PUT("api/rooms/update/{room_id}/")
     fun updateRoom( @Path("room_id") id: Int, @Body room: MuseumRoom): Call<MuseumRoom>
+
+    @DELETE("api/rooms/delete/{room_id}/")
+    fun deleteRoom(@Path("room_id") id: Int): Call<Void>
 }

@@ -104,7 +104,7 @@ class AddExhibit : AppCompatActivity() {
                     val rooms = response.body() ?: emptyList()
 
                     withContext(Dispatchers.Main) {
-                        roomsList = rooms // Сохраняем список комнат с их ID
+                        roomsList = rooms
                         val roomNumbers = rooms.map { it.room_number }
                         val adapter = ArrayAdapter(
                             this@AddExhibit,
