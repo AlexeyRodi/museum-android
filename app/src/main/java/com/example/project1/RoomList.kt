@@ -1,7 +1,9 @@
 package com.example.project1
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
@@ -77,6 +79,10 @@ class RoomList : AppCompatActivity() {
                                     "Выбрана комната: ${room.room_number}",
                                     Toast.LENGTH_SHORT
                                 ).show()
+
+                                val intent = Intent(this@RoomList, RoomDetails::class.java)
+                                intent.putExtra("room_number", room.room_number.toInt())
+                                startActivity(intent)
                             }
                             buttonsContainer.addView(button)
                         }
