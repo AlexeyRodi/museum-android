@@ -163,7 +163,7 @@ class EditExhibit : AppCompatActivity() {
                     val rooms = response.body() ?: emptyList()
 
                     withContext(Dispatchers.Main) {
-                        roomsList = rooms // Сохраняем список комнат с их ID
+                        roomsList = rooms
                         val roomNumbers = rooms.map { it.room_number }
                         val adapter = ArrayAdapter(
                             this@EditExhibit,
@@ -173,7 +173,6 @@ class EditExhibit : AppCompatActivity() {
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                         exhibitRoomSpinner.adapter = adapter
 
-                        // Устанавливаем выбранную комнату по ID
                         setRoomSelectionById(exhibitRoomId, rooms)
                     }
                 } else {
@@ -233,7 +232,7 @@ class EditExhibit : AppCompatActivity() {
                             initialImage = it.image.toString()
 
                             loadRooms(it.room)
-                            
+
 
                         } ?: run {
                             Toast.makeText(
@@ -283,7 +282,7 @@ class EditExhibit : AppCompatActivity() {
                         "Данные обновлены успешно!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    val intent = Intent(this@EditExhibit, ExhibitDetails::class.java)
+                    val intent = Intent(this@EditExhibit, MainList::class.java)
 
                     intent.putExtra(
                         "EXHIBIT_ID",
@@ -308,7 +307,7 @@ class EditExhibit : AppCompatActivity() {
 
     private fun openImageChooser() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.type = "image/*" // Фильтр для выбора только изображений
+        intent.type = "image/*"
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
@@ -317,7 +316,7 @@ class EditExhibit : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.data!!
-            Log.d("SelectedImageUri", selectedImageUri.toString()) // Выводим URI в лог
+            Log.d("SelectedImageUri", selectedImageUri.toString())
         }
     }
 

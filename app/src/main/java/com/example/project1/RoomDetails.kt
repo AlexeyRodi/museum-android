@@ -88,7 +88,7 @@ class RoomDetails : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
                             this@RoomDetails,
-                            "Ошибка загрузки экспонатов: ${response.code()}",
+                            "Ошибка загрузки комнат: ${response.code()}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }

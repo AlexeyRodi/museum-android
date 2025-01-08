@@ -3,7 +3,6 @@ package com.example.project1
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
@@ -15,8 +14,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.widget.Toast
-import com.example.project1.exhibition.Exhibition
-import com.example.project1.exhibition.ExhibitionRepository
 import com.example.project1.museumroom.MuseumRoom
 import com.example.project1.museumroom.MuseumRoomRepository
 import kotlinx.coroutines.CoroutineScope
@@ -142,7 +139,7 @@ class EditRoom : AppCompatActivity() {
                         "Данные обновлены успешно!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    val intent = Intent(this@EditRoom, RoomDetails::class.java)
+                    val intent = Intent(this@EditRoom, MainList::class.java)
 
                     intent.putExtra(
                         "ROOM_ID",

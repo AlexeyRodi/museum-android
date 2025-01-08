@@ -106,8 +106,8 @@ class AddExhibition : AppCompatActivity() {
         call.enqueue(object : Callback<Exhibition> {
             override fun onResponse(call: Call<Exhibition>, response: Response<Exhibition>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AddExhibition, "Экспонат добавлен!", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@AddExhibition, ExhibitionList::class.java)
+                    Toast.makeText(this@AddExhibition, "Выставка добавлена!", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@AddExhibition, MainList::class.java)
                     startActivity(intent)
                 } else {
                     Toast.makeText(

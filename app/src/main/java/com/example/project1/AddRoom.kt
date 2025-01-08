@@ -80,7 +80,7 @@ class AddRoom : AppCompatActivity() {
             override fun onResponse(call: Call<MuseumRoom>, response: Response<MuseumRoom>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@AddRoom, "Комната добавлена!", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@AddRoom, RoomList::class.java)
+                    val intent = Intent(this@AddRoom, MainList::class.java)
                     startActivity(intent)
                 } else {
                     Toast.makeText(

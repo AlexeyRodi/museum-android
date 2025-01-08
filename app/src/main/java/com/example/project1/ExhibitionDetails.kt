@@ -16,7 +16,6 @@ import androidx.core.view.WindowInsetsCompat
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.example.project1.exhibit.ExhibitRepository
 import com.example.project1.exhibition.ExhibitionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -144,7 +143,7 @@ class ExhibitionDetails : AppCompatActivity() {
                             "Выставка успешно удалена",
                             Toast.LENGTH_SHORT
                         ).show()
-                        val intent = Intent(this@ExhibitionDetails, ExhibitionList::class.java)
+                        val intent = Intent(this@ExhibitionDetails, MainList::class.java)
                         startActivity(intent)
                     }
                 } else {

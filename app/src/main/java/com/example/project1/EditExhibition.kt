@@ -203,7 +203,7 @@ class EditExhibition : AppCompatActivity() {
                         "Данные обновлены успешно!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    val intent = Intent(this@EditExhibition, ExhibitionDetails::class.java)
+                    val intent = Intent(this@EditExhibition, MainList::class.java)
 
                     intent.putExtra(
                         "EXHIBITION_ID",

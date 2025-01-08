@@ -191,7 +191,7 @@ class ExhibitDetails : AppCompatActivity() {
                             "Экспонат успешно удалён",
                             Toast.LENGTH_SHORT
                         ).show()
-                        val intent = Intent(this@ExhibitDetails, ExhibitList::class.java)
+                        val intent = Intent(this@ExhibitDetails, MainList::class.java)
                         startActivity(intent)
                     }
                 } else {
