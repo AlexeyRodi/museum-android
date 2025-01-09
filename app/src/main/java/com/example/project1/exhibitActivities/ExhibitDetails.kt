@@ -66,7 +66,7 @@ class ExhibitDetails : AppCompatActivity() {
         exhibitDeleteButton = findViewById(R.id.buttonDeleteExhibit)
 
         val exhibitId = intent.getIntExtra("EXHIBIT_ID", -1)
-        val exhibitRoomId = intent.getIntExtra("EXHIBIT_ROOM", -1) // Если room - ID (число)
+        val exhibitRoomId = intent.getIntExtra("EXHIBIT_ROOM", -1)
 
         if (exhibitId != -1) {
             loadExhibitDetails(exhibitId)
@@ -154,7 +154,6 @@ class ExhibitDetails : AppCompatActivity() {
 
                     withContext(Dispatchers.Main) {
                         if (room != null) {
-                            // Возвращаем номер комнаты через callback
                             onRoomLoaded(room.room_number)
                         } else {
                             exhibitRoomTextView.text = "Комната не найдена"
